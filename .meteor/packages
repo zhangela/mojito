@@ -21,3 +21,7 @@ ejson
 spacebars
 check
 react
+kadira:flow-router
+es5-shim
+ecmascript
+kadira:react-layout
