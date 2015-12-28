@@ -20,6 +20,7 @@ ddp-common@1.2.2
 ddp-server@1.2.2
 deps@1.0.9
 diff-sequence@1.0.1
+digilord:faker@1.0.7
 ecmascript@0.1.6
 ecmascript-runtime@0.2.6
 ejson@1.0.7
@@ -36,6 +37,7 @@ jquery@1.11.4
 jsx@0.2.3
 kadira:flow-router@2.10.0
 kadira:react-layout@1.5.3
+konecty:change-case@2.3.0
 launch-screen@1.0.4
 livedata@1.0.15
 logging@1.0.8

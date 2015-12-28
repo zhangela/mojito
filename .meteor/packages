@@ -25,3 +25,5 @@ kadira:flow-router
 es5-shim
 ecmascript
 kadira:react-layout
+digilord:faker
+konecty:change-case
