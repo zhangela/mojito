@@ -8,11 +8,20 @@ if (Activities.find().count() === 0) {
 Meteor.methods({
     resetCollection() {
         Activities.remove({});
+        ActivityTypes.remove({});
+
+        activityTypes.forEach((activityType) => {
+            ActivityTypes.insert({
+                name: activityType
+            });
+        });
+
+        activityTypeIds = _.pluck(ActivityTypes.find().fetch(), "_id");
 
         _.range(20).forEach((index) => {
             Activities.insert({
                 company: faker.company.companyName(),
-                activityType: _.sample(activityTypes),
+                activityTypeId: _.sample(activityTypeIds),
                 activityName: changeCase.title(faker.hacker.adjective() + ' ' + faker.hacker.noun() + ' ' + faker.hacker.ingverb()),
                 tagline: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam maximus sagittis mauris, vel blandit elit dapibus sit amet. Nam volutpat eu nunc id faucibus.",
                 description: `
@@ -38,7 +47,8 @@ Meteor.methods({
                 groupSize: {
                     min: _.sample([1, 5, 10]),
                     max: _.sample([10, 20, 100]),
-                }
+                },
+                yelpRating: _.random(2, 10)/2
             });
         });
     }

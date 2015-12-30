@@ -26,6 +26,19 @@ ActivityItem = React.createClass({
     }
   },
 
+  renderStarRating(item) {
+    const rating = item.yelpRating;
+    const fullStars = Math.floor(rating);
+    const halfStar = rating - fullStars;
+
+    return (
+      <span>
+        { _.range(fullStars).map((i) => <i className="fa fa-star" key={i} />) }
+        { halfStar ? <i className="fa fa-star-half-o"/> : '' }
+      </span>
+    );
+  },
+
   render() {
     const item = this.props.activityItem;
     return (
@@ -41,7 +54,8 @@ ActivityItem = React.createClass({
           </div>
           <div className="col-md-3">
             <div className="data">
-              <div><i className="fa fa-tag"/> {item.activityType}</div>
+              <div>{this.renderStarRating(item)}</div>
+              <div><i className="fa fa-tag"/> {item.activityType().name}</div>
               <div><i className="fa fa-dollar"/> {_.min(_.pluck(item.pricing, "perPerson"))}+ per person</div>
               <div><i className="fa fa-clock-o"/> {this.getDurationRange(item)}</div>
               <div><i className="fa fa-users"/> {this.getGroupSize(item)}</div>

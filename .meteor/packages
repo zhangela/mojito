@@ -30,3 +30,4 @@ konecty:change-case
 twbs:bootstrap
 less
 fortawesome:fontawesome
+dburles:collection-helpers
