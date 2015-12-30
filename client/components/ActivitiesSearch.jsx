@@ -1,10 +1,16 @@
 ActivitiesSearch = React.createClass({
+
     getInitialState() {
-        return this.props.searchQuery;
+        return {};
     },
 
     handleSubmit() {
-        this.props.onSubmit(this.state);
+        this.props.onSubmit(this.unsubmittedSearchQuery());
+    },
+
+    clearSearch() {
+        this.props.onClear();
+        this.replaceState({});
     },
 
     handleChange(event) {
@@ -19,27 +25,39 @@ ActivitiesSearch = React.createClass({
         });
     },
 
+    unsubmittedSearchQuery() {
+        // _.defaults would actually write directly to this.state
+        // if we didn't clone it first, which causes race conditions
+        // with this function executed multiple times
+        return _.defaults(_.clone(this.state), this.props.searchQuery);
+    },
+
     render() {
+        const searchQuery = this.unsubmittedSearchQuery();
+
         return (
             <div className="activitiesSearch">
-                <input type="text" name="numPeople" value={this.state.numPeople || null} placeholder="# People" onChange={this.handleChange} />
-                <input type="text" name="budget" value={this.state.budget || null} placeholder="$ Budget" onChange={this.handleChange} />
+                <input type="text" name="numPeople" value={searchQuery.numPeople || null} placeholder="# People" onChange={this.handleChange} />
+                <input type="text" name="budget" value={searchQuery.budget || null} placeholder="$ Budget" onChange={this.handleChange} />
 
                 <CheckboxSelector
                     title="Duration"
                     name="durations"
                     options={this.props.durations}
-                    optionsSelected={this.state.durations}
+                    optionsSelected={searchQuery.durations}
                     onChange={this.handleChange} />
 
                 <CheckboxSelector
                     title="Activity Types"
                     name="activityTypes"
                     options={this.props.activityTypes}
-                    optionsSelected={this.state.activityTypes}
+                    optionsSelected={searchQuery.activityTypes}
                     onChange={this.handleChange} />
 
                 <button onClick={this.handleSubmit}>Search</button>
+
+                <button onClick={this.clearSearch}>Clear</button>
+
             </div>
         );
     }

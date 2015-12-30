@@ -2,10 +2,17 @@ ActivitiesPage = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        return {
+        const activitiesSubscription = Meteor.subscribe("Activities");
+        const activityTypesSubscription = Meteor.subscribe("ActivityTypes");
+
+        const data = {
+            activitiesReady: activitiesSubscription.ready(),
             activities: this.getFilteredActivities(),
+            activityTypesReady: activityTypesSubscription.ready(),
             activityTypes: ActivityTypes.find().fetch(),
         };
+
+        return data;
     },
 
     getFilteredActivities() {
@@ -53,7 +60,6 @@ ActivitiesPage = React.createClass({
             }
         });
 
-
         return Activities.find(mongoQuery).fetch();
     },
 
@@ -82,7 +88,7 @@ ActivitiesPage = React.createClass({
                 numPeople: 0,
                 budget: 0,
                 durations: _.pluck(this.durations(), "name"),
-                activityTypes: _.pluck(this.data.activityTypes, "name"),
+                activityTypes: _.pluck(ActivityTypes.find().fetch(), "name"),
             }
         }
     },
@@ -90,6 +96,12 @@ ActivitiesPage = React.createClass({
     handleSubmit(query) {
         FlowRouter.setQueryParams({
             query: JSON.stringify(query)
+        });
+    },
+
+    clearSearch() {
+        FlowRouter.setQueryParams({
+            query: null,
         });
     },
 
@@ -101,7 +113,9 @@ ActivitiesPage = React.createClass({
                         searchQuery={this.getSearchQuery()}
                         activityTypes={this.data.activityTypes}
                         durations={this.durations()}
-                        onSubmit={this.handleSubmit} />
+                        onSubmit={this.handleSubmit}
+                        onClear={this.clearSearch}
+                        />
                 </div>
                 <div className="col-md-9">
                     <ActivitiesList activities={this.data.activities}/>
