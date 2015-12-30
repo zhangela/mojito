@@ -4,13 +4,13 @@ ActivitiesList = React.createClass({
   },
   render() {
     return (
-      <ul>
+      <div>
         {
           this.props.activities.map((activityItem) => {
             return <ActivityItem activityItem={activityItem} key={activityItem._id} />;
           })
         }
-      </ul>
+      </div>
     );
   }
 });
