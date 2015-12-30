@@ -5,3 +5,11 @@ FlowRouter.route("/activities", {
         })
     }
 });
+
+FlowRouter.route("/activity/:id", {
+    action() {
+        ReactLayout.render(Layout, {
+            content: <ActivityPage />
+        })
+    }
+});

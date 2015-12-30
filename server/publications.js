@@ -5,3 +5,7 @@ Meteor.publish("ActivityTypes", function() {
 Meteor.publish("Activities", function() {
     return Activities.find();
 });
+
+Meteor.publish("Activities.single", function(id) {
+    return Activities.find(id);
+});
