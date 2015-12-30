@@ -20,8 +20,6 @@ ActivitiesSearch = React.createClass({
     },
 
     render() {
-        console.log(this.state);
-
         return (
             <div className="activitiesSearch">
                 <input type="text" name="numPeople" value={this.state.numPeople || null} placeholder="# People" onChange={this.handleChange} />

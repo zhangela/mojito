@@ -16,12 +16,10 @@ Meteor.methods({
             });
         });
 
-        activityTypeIds = _.pluck(ActivityTypes.find().fetch(), "_id");
-
         _.range(20).forEach((index) => {
             Activities.insert({
                 company: faker.company.companyName(),
-                activityTypeId: _.sample(activityTypeIds),
+                activityType: _.sample(activityTypes),
                 activityName: changeCase.title(faker.hacker.adjective() + ' ' + faker.hacker.noun() + ' ' + faker.hacker.ingverb()),
                 tagline: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam maximus sagittis mauris, vel blandit elit dapibus sit amet. Nam volutpat eu nunc id faucibus.",
                 description: `

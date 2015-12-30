@@ -55,7 +55,7 @@ ActivityItem = React.createClass({
           <div className="col-md-3">
             <div className="data">
               <div>{this.renderStarRating(item)}</div>
-              <div><i className="fa fa-tag"/> {item.activityType().name}</div>
+              <div><i className="fa fa-tag"/> {item.activityType}</div>
               <div><i className="fa fa-dollar"/> {_.min(_.pluck(item.pricing, "perPerson"))}+ per person</div>
               <div><i className="fa fa-clock-o"/> {this.getDurationRange(item)}</div>
               <div><i className="fa fa-users"/> {this.getGroupSize(item)}</div>

@@ -3,9 +3,58 @@ ActivitiesPage = React.createClass({
 
     getMeteorData() {
         return {
-            activities: Activities.find().fetch(),
+            activities: this.getFilteredActivities(),
             activityTypes: ActivityTypes.find().fetch(),
         };
+    },
+
+    getFilteredActivities() {
+        const searchQuery = this.getSearchQuery();
+
+        const mongoQuery = {};
+
+        if (searchQuery.numPeople > 0) {
+            _.extend(mongoQuery, {
+                "groupSize.min": {
+                    $lte: searchQuery.numPeople,
+                },
+                "groupSize.max": {
+                    $gte: searchQuery.numPeople,
+                },
+            });
+        }
+
+        _.extend(mongoQuery, {
+            "activityType": {
+                $in: searchQuery.activityTypes
+            }
+        });
+
+        const matchingDurations = searchQuery.durations.map((durationName) => {
+            return _.findWhere(this.durations(), {name: durationName});
+        });
+
+        const minDuration = _.min(_.pluck(matchingDurations, "minDuration"));
+        const maxDuration = _.max(_.pluck(matchingDurations, "maxDuration"));
+
+        const budget = searchQuery.budget || Infinity;
+
+        _.extend(mongoQuery, {
+            "pricing": {
+                $elemMatch: {
+                    "duration": {
+                        $lte: maxDuration,
+                        $gte: minDuration,
+                    },
+                    "perPerson": {
+                        $lte: budget,
+                    },
+                }
+            }
+        });
+
+
+        return Activities.find(mongoQuery).fetch();
     },
 
     durations() {
