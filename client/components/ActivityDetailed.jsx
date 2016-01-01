@@ -23,6 +23,7 @@ ActivityDetailed = (props) => {
           <div className="description">{activity.description}</div>
         </div>
         <div className="col-md-4">
+            <ActivityActions activity={activity} searchQuery={props.searchQuery} />
         </div>
       </div>
     </div>

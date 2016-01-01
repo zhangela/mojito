@@ -25,4 +25,8 @@ Activities.helpers({
     }
   },
 
+  getSortedPricing() {
+    return _.sortBy(this.pricing, 'duration');
+  },
+
 });

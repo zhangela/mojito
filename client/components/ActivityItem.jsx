@@ -1,5 +1,7 @@
 ActivityItem = (props) => {
   const item = props.activityItem;
+  const activityPageUrl = FlowRouter.path(
+    "activityPage", {id: item._id}, {query: SearchQuery.generateQueryParam(props.searchQuery)});
   return (
     <div className="activityItem">
       <div className="row">
@@ -7,7 +9,7 @@ ActivityItem = (props) => {
           <div style={{backgroundImage: `url(${item.imageUrl})`}} className="activityThumbnail"></div>
         </div>
         <div className="col-md-7">
-          <h3><a href={`/activity/${item._id}`}>{item.activityName}</a></h3>
+          <h3><a href={activityPageUrl}>{item.activityName}</a></h3>
           <div className="company"><i className="fa fa-building-o"/> {item.company}</div>
           <div className="tagline">{item.tagline}</div>
         </div>

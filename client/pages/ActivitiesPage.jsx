@@ -10,13 +10,15 @@ ActivitiesPage = React.createClass({
             activities: this.getFilteredActivities(),
             activityTypesReady: activityTypesSubscription.ready(),
             activityTypes: ActivityTypes.find().fetch(),
+            searchQuery: SearchQuery.get(),
         };
 
         return data;
     },
 
     getFilteredActivities() {
-        const searchQuery = this.getSearchQuery();
+        const searchQuery = SearchQuery.get();
+        console.log(searchQuery);
 
         const mongoQuery = {};
 
@@ -38,7 +40,7 @@ ActivitiesPage = React.createClass({
         });
 
         const matchingDurations = searchQuery.durations.map((durationName) => {
-            return _.findWhere(this.durations(), {name: durationName});
+            return _.findWhere(SearchQuery.durations(), {name: durationName});
         });
 
         const minDuration = _.min(_.pluck(matchingDurations, "minDuration"));
@@ -63,46 +65,12 @@ ActivitiesPage = React.createClass({
         return Activities.find(mongoQuery).fetch();
     },
 
-    durations() {
-        return [
-            {
-                name: "half day",
-                minDuration: 1,
-                maxDuration: 4,
-            },
-            {
-                name: "full day",
-                minDuration: 4,
-                maxDuration: 10,
-            },
-        ];
-    },
-
-    getSearchQuery() {
-        const urlQuery = FlowRouter.getQueryParam("query");
-
-        if (urlQuery) {
-            return JSON.parse(urlQuery);
-        } else {
-            return {
-                numPeople: 0,
-                budget: 0,
-                durations: _.pluck(this.durations(), "name"),
-                activityTypes: _.pluck(ActivityTypes.find().fetch(), "name"),
-            }
-        }
-    },
-
     handleSubmit(query) {
-        FlowRouter.setQueryParams({
-            query: JSON.stringify(query)
-        });
+        SearchQuery.set(query);
     },
 
     clearSearch() {
-        FlowRouter.setQueryParams({
-            query: null,
-        });
+        SearchQuery.clear();
     },
 
     render() {
@@ -110,15 +78,18 @@ ActivitiesPage = React.createClass({
             <div className="row">
                 <div className="col-md-3">
                     <ActivitiesSearch
-                        searchQuery={this.getSearchQuery()}
+                        searchQuery={this.data.searchQuery}
                         activityTypes={this.data.activityTypes}
-                        durations={this.durations()}
+                        durations={SearchQuery.durations()}
                         onSubmit={this.handleSubmit}
                         onClear={this.clearSearch}
                         />
                 </div>
                 <div className="col-md-9">
-                    <ActivitiesList activities={this.data.activities}/>
+                    <ActivitiesList
+                        activities={this.data.activities}
+                        searchQuery={this.data.searchQuery}
+                    />
                 </div>
             </div>
         );

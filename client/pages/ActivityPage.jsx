@@ -8,6 +8,7 @@ ActivityPage = React.createClass({
         const data = {
             activityReady: activitySubscription.ready(),
             activity: Activities.findOne(this.getActivityId()),
+            searchQuery: SearchQuery.get(),
         };
 
         return data;
@@ -21,7 +22,10 @@ ActivityPage = React.createClass({
     render() {
         if (this.data.activityReady) {
             return (
-                <ActivityDetailed activity={this.data.activity} />
+                <ActivityDetailed
+                    activity={this.data.activity}
+                    searchQuery={this.data.searchQuery}
+                />
             );
         } else {
             return <div></div>;
