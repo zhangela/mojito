@@ -17,6 +17,9 @@ Meteor.methods({
         });
 
         _.range(20).forEach((index) => {
+            const durationRange = _.range(1, 10);
+            const durations = _.sample(durationRange, _.random(5));
+
             Activities.insert({
                 company: faker.company.companyName(),
                 activityType: _.sample(activityTypes),
@@ -34,9 +37,9 @@ Meteor.methods({
                     latitude: faker.address.latitude(),
                     longitude: faker.address.longitude()
                 },
-                pricing: _.range(_.random(1, 5)).map((numDurations) => {
+                pricing: durations.map((duration) => {
                     return {
-                        duration: _.random(1, 8),
+                        duration: duration,
                         perPerson: _.random(4, 40) * 5,
                     }
                 }),

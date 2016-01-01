@@ -51,7 +51,7 @@ ActivityActions = React.createClass({
           <input type="text" name="numPeople" value={this.getQuoteQuery('numPeople') || null} placeholder="# People" onChange={this.handleChange} />
           <select name="duration" onChange={this.handleChange}>
             <option value="unselected" key="unselected">Select one</option>
-            {activity.getSortedPricing().map((pricingObj) => {
+            {activity.getSortedPricing().map((pricingObj, i) => {
               return (
                 <option key={pricingObj.duration} value={pricingObj.duration}>
                   {pricingObj.duration} {this.getHourUnit(pricingObj.duration)}: ${pricingObj.perPerson}
