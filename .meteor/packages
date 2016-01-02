@@ -31,3 +31,5 @@ twbs:bootstrap
 less
 fortawesome:fontawesome
 dburles:collection-helpers
+mdg:validated-method
+aldeed:simple-schema

@@ -7,7 +7,7 @@ ActivityActions = React.createClass({
   mixins: [ReactMeteorData],
 
   getMeteorData() {
-    const numPeople = this.getQuoteQuery("numPeople");
+    const numPeople = this.getNumPeopleFromUrl();
     let duration = FlowRouter.getQueryParam("duration") || null;
 
     let quote = null;
@@ -25,11 +25,17 @@ ActivityActions = React.createClass({
     };
   },
 
-  getQuoteQuery(key) {
-    if (FlowRouter.getQueryParam(key) === undefined) {
-      return this.props.searchQuery[key];
+  getInitialState() {
+    return {
+      errors: {}
+    };
+  },
+
+  getNumPeopleFromUrl() {
+    if (FlowRouter.getQueryParam("numPeople") === undefined) {
+      return this.props.searchQuery["numPeople"];
     }
-    return FlowRouter.getQueryParam(key);
+    return parseInt(FlowRouter.getQueryParam("numPeople"), 10);
   },
 
   getHourUnit(value) {
@@ -40,11 +46,56 @@ ActivityActions = React.createClass({
   },
 
   handleChange(event) {
+    const fieldName = event.target.name;
+
+    const errors = this.state.errors;
+    delete errors[fieldName];
+    this.setState({
+      errors: errors
+    });
+
     FlowRouter.withReplaceState(function() {
       FlowRouter.setQueryParams({
-          [event.target.name]: event.target.value,
+        [fieldName]: event.target.value,
       });
     });
+  },
+
+  onContactHost() {
+    Activities.methods.contactHost.call({
+      activityId: this.props.activity._id,
+      numPeople: this.data.numPeople,
+      duration: this.data.duration,
+    }, (err, res) => {
+      if (err) {
+        this.setState({
+          errors: _.indexBy(err.details, "name")
+        });
+
+        return;
+      }
+
+      // Method call succeeded, so there are no validation errors
+      this.setState({
+        errors: null
+      });
+
+      // TODO: do something useful
+    });
+  },
+
+  errorMessage(field) {
+    if (! this.state.errors[field]) {
+      return null;
+    }
+
+    const activity = this.props.activity;
+
+    return {
+      numPeople: `Please enter a number between
+        ${activity.groupSize.min} and ${activity.groupSize.max}.`,
+      duration: "Please select an option from the dropdown."
+    }[field];
   },
 
   render() {
@@ -54,7 +105,9 @@ ActivityActions = React.createClass({
     return (
       <div className="ActivityActions">
         <div className="QuoteBox">
-          <InputRow label="Number of people">
+          <InputRow
+              label="Number of people"
+              errorMsg={this.errorMessage("numPeople")}>
             <input
               className="numPeople form-control"
               type="text"
@@ -64,19 +117,21 @@ ActivityActions = React.createClass({
               onChange={this.handleChange} />
           </InputRow>
 
-          <InputRow label="Duration">
+          <InputRow
+              label="Duration"
+              errorMsg={this.errorMessage("duration")}>
             <select
                 className="duration form-control"
                 name="duration"
-                onChange={this.handleChange}>
+                onChange={this.handleChange}
+                value={this.data.duration}>
               <option value="unselected" key="unselected">Select one</option>
 
               {activity.getSortedPricing().map((pricingObj, i) => {
                 return (
                   <option
                       key={pricingObj.duration}
-                      value={pricingObj.duration}
-                      selected={pricingObj.duration === this.data.duration}>
+                      value={pricingObj.duration}>
                     {pricingObj.duration} {this.getHourUnit(pricingObj.duration)}: ${pricingObj.perPerson}/person
                   </option>
                 );
@@ -94,12 +149,14 @@ ActivityActions = React.createClass({
 
           <InputRow label="Quote">
             <div className="quote">
-              ${this.data.quote.toFixed(2) || "N/A"}
+              {(this.data.quote && `$${this.data.quote.toFixed(2)}`) || "N/A"}
             </div>
           </InputRow>
         </div>
 
-        <button className="contactHost btn btn-primary btn-lg btn-block">Contact Host</button>
+        <button className="contactHost btn btn-primary btn-lg btn-block" onClick={this.onContactHost}>
+          Contact Host
+        </button>
       </div>
     );
   }
@@ -110,7 +167,12 @@ InputRow = React.createClass({
     return (
       <div className="row InputRow">
         <div className="col-xs-5 inputRowLabel">{this.props.label}</div>
-        <div className="col-xs-7">{this.props.children}</div>
+        <div className="col-xs-7">
+          {this.props.children}
+          <div className="error">
+            {this.props.errorMsg}
+          </div>
+        </div>
       </div>
     );
   }

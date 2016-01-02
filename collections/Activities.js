@@ -30,3 +30,34 @@ Activities.helpers({
   },
 
 });
+
+
+Activities.methods = {
+    contactHost: new ValidatedMethod({
+        name: "Activities.methods.contactHost",
+
+        validate(args) {
+            const activity = Activities.findOne(args.activityId);
+
+            new SimpleSchema({
+                activityId: {
+                    type: String
+                },
+                numPeople: {
+                    type: Number,
+                    min: activity.groupSize.min,
+                    max: activity.groupSize.max
+                },
+                duration: {
+                    type: Number,
+                    allowedValues: _.pluck(activity.pricing, "duration")
+                },
+            }).validate(args);
+        },
+
+        run({activityId, numPeople, duration}) {
+            // TODO: contact host
+            console.log("Called method!");
+        }
+    }),
+}
